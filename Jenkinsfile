@@ -38,21 +38,25 @@ pipeline {
                     // Remove old container safely
                     bat "docker rm -f test-app || echo No existing container"
 
-                    // Run container
-                    bat "docker run -d --name test-app -p 5000:5000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    // Run container on correct port 8000
+                    bat "docker run -d --name test-app -p 8000:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
 
-                    // Wait for app startup
-                    bat 'ping 127.0.0.1 -n 10 >nul'
+                    // Wait for app startup (increased wait time)
+                    bat 'timeout 15 >nul'
 
-                    // Health checks (fail build if not reachable)
-                    def health1 = bat(script: 'powershell -Command "curl http://localhost:8000/health -UseBasicParsing"', returnStatus: true)
-                    def health2 = bat(script: 'powershell -Command "curl http://localhost:8000/ -UseBasicParsing"', returnStatus: true)
-                    if (health1 != 0 || health2 != 0) {
+                    // Health checks on correct port 8000
+                    def healthCheck = bat(
+                        script: 'powershell -Command "try { $response = Invoke-WebRequest -Uri http://localhost:8000/ -TimeoutSec 10 -UseBasicParsing; Write-Host \\\"SUCCESS: \\\" + $response.StatusCode; exit 0 } catch { Write-Host \\\"FAILED: \\\" + $_.Exception.Message; exit 1 }"',
+                        returnStatus: true
+                    )
+                    
+                    if (healthCheck != 0) {
+                        bat "docker logs test-app"
                         error("❌ Health check failed!")
                     }
 
                     // Stop and remove container
-                    bat "docker stop test-app && docker rm test-app"
+                    bat "docker stop test-app && docker rm test-app || echo Container already removed"
                 }
             }
         }
@@ -62,7 +66,6 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'docker-id-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     bat """
                     echo Pushing Docker images...
-                    docker login -u %DOCKER_USER% -p %DOCKER_PASS%
                     docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
                     docker push ${DOCKER_IMAGE}:latest
                     """
@@ -81,13 +84,17 @@ pipeline {
 
                     bat """
                     echo Deploying to Kubernetes...
-                    kubectl apply -f k8s\\deployment.yaml --namespace ${K8S_NAMESPACE}
-                    kubectl apply -f k8s\\service.yaml --namespace ${K8S_NAMESPACE} || echo Service skipped
-                    kubectl apply -f k8s\\hpa.yaml --namespace ${K8S_NAMESPACE} || echo HPA skipped
+                    kubectl apply -f deployment.yaml --namespace ${K8S_NAMESPACE}
+                    kubectl apply -f service.yaml --namespace ${K8S_NAMESPACE}
 
                     echo Updating image in deployment...
                     kubectl set image deployment/ticket-booking-deployment ticket-booking-container=${DOCKER_IMAGE}:${DOCKER_TAG} --namespace ${K8S_NAMESPACE}
-                    kubectl rollout status deployment/ticket-booking-deployment --namespace ${K8S_NAMESPACE} --timeout=120s
+                    
+                    echo Waiting for rollout to complete...
+                    kubectl rollout status deployment/ticket-booking-deployment --namespace ${K8S_NAMESPACE} --timeout=180s
+                    
+                    echo Deployment status:
+                    kubectl get deployments,pods,services --namespace ${K8S_NAMESPACE}
                     """
                 }
             }
