@@ -35,24 +35,28 @@ pipeline {
                 script {
                     echo "⚡ Testing Docker container..."
 
-                    // Remove old container safely
+                    // Remove old container
                     bat "docker rm -f test-app || echo No existing container"
 
-                    // Run container on different port (5000 instead of 8000)
+                    // Run container on port 5000
                     bat "docker run -d --name test-app -p 5000:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
 
-                    // Wait for app startup
-                    bat 'timeout 10 >nul'
+                    // Wait for app startup using ping (10 seconds)
+                    bat "ping -n 10 127.0.0.1 > nul"
 
-                    // Health checks on port 5000 (mapped to container's 8000)
+                    // Health check
                     def healthCheck = bat(
-                        script: 'powershell -Command "try { $response = Invoke-WebRequest -Uri http://localhost:5000/ -TimeoutSec 10 -UseBasicParsing; Write-Host \\\"SUCCESS: \\\" + $response.StatusCode; exit 0 } catch { Write-Host \\\"FAILED: \\\" + $_.Exception.Message; exit 1 }"',
+                        script: 'powershell -Command "try { $response = Invoke-WebRequest -Uri http://localhost:5000/ -TimeoutSec 10 -UseBasicParsing; Write-Host \\\"SUCCESS: Status \\\" + $response.StatusCode; exit 0 } catch { Write-Host \\\"FAILED: \\\" + $_.Exception.Message; exit 1 }"',
                         returnStatus: true
                     )
                     
+                    // Debug: Check container logs if health check fails
                     if (healthCheck != 0) {
+                        echo "❌ Health check failed! Checking container logs..."
                         bat "docker logs test-app"
                         error("❌ Health check failed!")
+                    } else {
+                        echo "✅ Health check passed!"
                     }
 
                     // Stop and remove container
