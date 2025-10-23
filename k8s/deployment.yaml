@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-assignment-2
+  labels:
+    app: devops-assignment-2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-assignment-2
+  template:
+    metadata:
+      labels:
+        app: devops-assignment-2
+    spec:
+      containers:
+        - name: devops-assignment-2-container
+          image: pavankumar1018/devops-assignment-2-main:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20

@@ -1,0 +1,25 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="card shadow-lg border-0 text-center mx-auto" style="max-width:700px">
+  <div class="card-body p-5">
+    <div class="mb-4">
+      <div class="fs-1 text-success mb-3">✅</div>
+      <h2 class="text-success fw-bold">Booking Confirmed!</h2>
+    </div>
+    
+    <div class="confirmation-details bg-light rounded-3 p-4 mb-4">
+      <p class="mb-2 fs-5"><strong>Booking Reference:</strong> <code class="fs-4">{{ booking.ref }}</code></p>
+      <p class="mb-2">{{ booking.name }} — {{ booking.email }}</p>
+      <p class="mb-2">Show: <strong>{{ booking.show }}</strong> ({{ booking.time }})</p>
+      <p class="mb-2">Date: <strong>{{ booking.date }}</strong> • Seats: <strong>{{ booking.seats }}</strong></p>
+      <p class="mb-0 fs-5">Total Paid: <strong class="text-success">₹{{ booking.total }}</strong></p>
+    </div>
+    
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a class="btn btn-primary btn-lg px-5" href="{{ url_for('home') }}">Back to Home</a>
+      <a class="btn btn-outline-primary btn-lg px-4" href="{{ url_for('view_bookings') }}">View All Bookings</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="text-white fw-bold">Your Bookings</h2>
+  <a href="{{ url_for('home') }}" class="btn btn-primary">Book New Show</a>
+</div>
+
+{% if bookings %}
+  <div class="row g-4">
+    {% for b in bookings %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 h-100">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <h5 class="card-title fw-bold text-dark">{{ b.show }}</h5>
+              <span class="badge bg-success rounded-pill">Confirmed</span>
+            </div>
+            <p class="card-text small text-muted mb-3">{{ b.date }} • {{ b.time }}</p>
+            <div class="booking-details">
+              <p class="mb-2"><strong>Name:</strong> {{ b.name }}</p>
+              <p class="mb-2"><strong>Seats:</strong> {{ b.seats }}</p>
+              <p class="mb-2"><strong>Total:</strong> ₹{{ b.total }}</p>
+              <p class="mb-0"><strong>Reference:</strong> <code>{{ b.ref }}</code></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card border-0 text-center py-5">
+    <div class="card-body">
+      <div class="fs-1 mb-3">🎭</div>
+      <h4 class="text-dark mb-3">No Bookings Yet</h4>
+      <p class="text-muted mb-4">Start your cinematic journey by booking your first show!</p>
+      <a href="{{ url_for('home') }}" class="btn btn-primary btn-lg">Explore Shows</a>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

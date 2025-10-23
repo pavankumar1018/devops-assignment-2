@@ -1,0 +1,41 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="card shadow-lg border-0 mx-auto" style="max-width:800px">
+  <div class="card-header bg-transparent border-0 pt-4">
+    <h2 class="text-center text-dark fw-bold">Book Your Experience</h2>
+    <p class="text-center text-muted">{{ show.title }} • {{ show.time }}</p>
+  </div>
+  <div class="card-body p-4">
+    <form method="post">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Full name</label>
+          <input name="name" class="form-control" placeholder="Enter your full name" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Email</label>
+          <input type="email" name="email" class="form-control" placeholder="your@email.com" required>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-2">
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Number of Seats</label>
+          <input name="seats" type="number" min="1" max="10" class="form-control" value="1" required>
+        </div>
+        <div class="col-md-8">
+          <label class="form-label fw-semibold">Show Date</label>
+          <input name="date" type="date" class="form-control" required>
+        </div>
+      </div>
+
+      <div class="text-center mt-5">
+        <button class="btn btn-success btn-lg px-5">Confirm Booking</button>
+        <a href="{{ url_for('home') }}" class="btn btn-outline-secondary btn-lg ms-2 px-4">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+[file content end]
