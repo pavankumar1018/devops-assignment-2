@@ -164,23 +164,23 @@ python app.py
 ```bash
 
 # Build Docker image
-docker build -t 18venky/ticket-booking-flask:latest .
+docker build -t pavankumar1018/devops-assignment-2-main:latest .
 
 
 # Run container
-docker run -d -p 5000:5000 18venky/ticket-booking-flask:latest
+docker run -d -p 5000:5000 pavankumar1018/devops-assignment-2-main:latest
 
 # Stop and remove container
-docker stop movie-app && docker rm movie-app
+docker devops-assignment-2-main && docker rm devops-assignment-2-main
 
 ```
 
 ## Push to Docker Hub:
 
 ```bash 
-docker tag movie-ticket-app 18venky/ticket-booking-flask:latest
+docker tag movie-ticket-app pavankumar1018/devops-assignment-2-main:latest
 docker login
-docker push 18venky/ticket-booking-flask:latest
+docker push pavankumar1018/devops-assignment-2-main:latest
 
 ```
 ## ☸️ Kubernetes Deployment
@@ -244,11 +244,11 @@ The CI/CD pipeline automates the build, test, push, and deployment process of th
    - **Docker Hub Credentials**
      - Kind: Username with Password
      - ID: `docker-hub-cred`
-     - Username: `12venky`
+     - Username: `pavankumar1018`
      - Password: Docker Hub password/token
    - **Kubernetes Config**
      - Kind: Secret file
-     - ID: `kubeconfig`
+     - ID: `kube-config`
      - File: Upload your `~/.kube/config`
 
 3. **Create Pipeline Job**
@@ -266,17 +266,16 @@ The CI/CD pipeline automates the build, test, push, and deployment process of th
 
 ```groovy
 DOCKERHUB_CREDENTIALS = credentials('docker-hub-cred')
-DOCKER_IMAGE = '18venky/movie-ticket-app'
+DOCKER_IMAGE = 'pavankumar1018/devops-assignment-2-main'
 K8S_NAMESPACE = 'default'
 
 ```
 
 ##  👤 Author
-Venkateshwararao Daravath
+Jammula Pavan Kumar
 
-GitHub: https://github.com/12Venky
-
-Docker Hub: https://hub.docker.com/u/18venky
+GitHub: https://github.com/pavankumar1018
+Docker Hub: https://hub.docker.com/u/pavankumar1018
 
 ## 🙏 Acknowledgments
 
