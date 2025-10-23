@@ -120,6 +120,32 @@ DevOps-Assignment-2/
 
 ```
 
+## Screenshots
+
+### 1. Jenkins Pipeline Configuration
+![Jenkins Configuration](screenshots/config.png)
+*Jenkins job configuration showing Git repository integration and build triggers*
+
+### 2. Docker Hub Repository
+![Docker Hub](screenshots/docker-hub.png)
+*Docker Hub repository showing the successfully pushed container image*
+
+### 3. GitHub Repository Structure
+![GitHub Repository](screenshots/github.png)
+*Source code structure on GitHub showing the Flask application and configuration files*
+
+### 4. Kubernetes Deployment
+![Kubernetes Service](screenshots/kubernetes-run.png)
+*Kubernetes service deployment using Minikube with accessible service URL*
+
+### 5. Jenkins Pipeline Execution
+![Pipeline Execution](screenshots/pipeline.png)
+*Successful Jenkins pipeline execution with all stages completed*
+
+### 6. Application Website
+![CineBook Website](screenshots/website.png)
+*CineBook application homepage showing available movies and booking options*
+
 
 ## 🚀 Local Development
 
