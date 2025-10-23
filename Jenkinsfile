@@ -38,15 +38,15 @@ pipeline {
                     // Remove old container safely
                     bat "docker rm -f test-app || echo No existing container"
 
-                    // Run container on correct port 8000
-                    bat "docker run -d --name test-app -p 8000:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    // Run container on different port (5000 instead of 8000)
+                    bat "docker run -d --name test-app -p 5000:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
 
-                    // Wait for app startup (increased wait time)
-                    bat 'timeout 15 >nul'
+                    // Wait for app startup
+                    bat 'timeout 10 >nul'
 
-                    // Health checks on correct port 8000
+                    // Health checks on port 5000 (mapped to container's 8000)
                     def healthCheck = bat(
-                        script: 'powershell -Command "try { $response = Invoke-WebRequest -Uri http://localhost:8000/ -TimeoutSec 10 -UseBasicParsing; Write-Host \\\"SUCCESS: \\\" + $response.StatusCode; exit 0 } catch { Write-Host \\\"FAILED: \\\" + $_.Exception.Message; exit 1 }"',
+                        script: 'powershell -Command "try { $response = Invoke-WebRequest -Uri http://localhost:5000/ -TimeoutSec 10 -UseBasicParsing; Write-Host \\\"SUCCESS: \\\" + $response.StatusCode; exit 0 } catch { Write-Host \\\"FAILED: \\\" + $_.Exception.Message; exit 1 }"',
                         returnStatus: true
                     )
                     
